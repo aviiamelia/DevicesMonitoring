@@ -1,3 +1,9 @@
+using DevicesMonitoring.Infra.database;
+using DevicesMonitoring.Repositories;
+using DevicesMonitoring.Repositories.dataAccess;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +12,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var users = new UserRepository(new MyDbContext());
+var devices = new DeviceRepository(new MyDbContext());
+var database = new Database(users, devices);
+database.main();
 
 var app = builder.Build();
 
