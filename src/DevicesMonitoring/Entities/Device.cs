@@ -8,6 +8,6 @@ public class Device
     public DateTime CreatedAt { get; set; }
 
     public int UserId { get; set; }
-  
-    public required UserModel User { get; set; }
+
+    public UserModel? User { get; set; }
 }

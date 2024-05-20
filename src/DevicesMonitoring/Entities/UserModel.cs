@@ -1,10 +1,16 @@
-﻿namespace DevicesMonitoring.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+namespace DevicesMonitoring.Entities;
 
 public class UserModel
 {
-    public int id { get; set; }
-    public string name { get; set; } = string.Empty;
+    [Key]
+    public int userid { get; set; }
+    public string username { get; set; } = string.Empty;
     public string email { get; set; } = string.Empty;
-    public string password { get; set; }
-    public ICollection<Device> Devices { get; set; }
+    public string passwordhash { get; set; } = string.Empty;
+    public DateTime createdat { get; set; }
+
+    public ICollection<Device>? Devices { get; set; }
 }
