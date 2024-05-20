@@ -1,6 +1,8 @@
+using DevicesMonitoring.Contracts;
 using DevicesMonitoring.Infra.database;
 using DevicesMonitoring.Repositories;
 using DevicesMonitoring.Repositories.dataAccess;
+using DevicesMonitoring.useCases.CreateUser;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -12,10 +14,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-var users = new UserRepository(new MyDbContext());
-var devices = new DeviceRepository(new MyDbContext());
-var database = new Database(users, devices);
-database.main();
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
+builder.Services.AddScoped<CreateUserUseCase>();
+
+builder.Services.AddScoped<Database>();
 
 var app = builder.Build();
 
@@ -24,6 +30,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+using (var scope = app.Services.CreateScope())
+{
+    var database = scope.ServiceProvider.GetRequiredService<Database>();
+    database.main(); 
 }
 
 app.UseHttpsRedirection();
