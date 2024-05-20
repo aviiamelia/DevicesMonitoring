@@ -1,26 +1,48 @@
 using DevicesMonitoring.Contracts;
-using DevicesMonitoring.Infra.database;
 using DevicesMonitoring.Repositories;
 using DevicesMonitoring.Repositories.dataAccess;
+using DevicesMonitoring.Services.jwtToken;
+using DevicesMonitoring.Services.LoggedUser;
 using DevicesMonitoring.useCases.CreateUser;
+using DevicesMonitoring.useCases.Loggin;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddScoped<IloggedUser, LoggedUser>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<CreateUserUseCase>();
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<DevicesMonitoring.Services.jwtToken.JwtSettings>();
+builder.Services.AddSingleton<JwtToken>(new JwtToken(jwtSettings.SecretKey, jwtSettings.Issuer, jwtSettings.Audience));
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
+        };
+    });
+
+builder.Services.AddScoped<LogginUseCase>();
 builder.Services.AddScoped<Database>();
 
 var app = builder.Build();

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DevicesMonitoring.Controllers;
-[Route("api/[controller]")]
+[Route("api/createuser")]
 [ApiController]
 public class CreateUser : ControllerBase
 {
