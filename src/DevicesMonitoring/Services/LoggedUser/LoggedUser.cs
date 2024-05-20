@@ -1,8 +1,7 @@
 ﻿using DevicesMonitoring.Contracts;
 using DevicesMonitoring.Entities;
-using DevicesMonitoring.Services.LoggedUser;
-namespace RocketseatAuction.Api.Services;
 
+namespace DevicesMonitoring.Services.LoggedUser;
 public class LoggedUser : IloggedUser
 {
 
