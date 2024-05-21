@@ -1,14 +1,17 @@
 using DevicesMonitoring.Contracts;
+using DevicesMonitoring.filters;
 using DevicesMonitoring.Repositories;
 using DevicesMonitoring.Repositories.dataAccess;
 using DevicesMonitoring.Services.jwtToken;
 using DevicesMonitoring.Services.LoggedUser;
+using DevicesMonitoring.useCases.CreateDevice;
 using DevicesMonitoring.useCases.CreateUser;
 using DevicesMonitoring.useCases.Loggin;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +28,11 @@ builder.Services.AddScoped<IloggedUser, LoggedUser>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<CreateUserUseCase>();
+builder.Services.AddScoped<CreateDeviceUseCase>();
+builder.Services.AddScoped<ListDeviceUseCase>();
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<DevicesMonitoring.Services.jwtToken.JwtSettings>();
 builder.Services.AddSingleton<JwtToken>(new JwtToken(jwtSettings.SecretKey, jwtSettings.Issuer, jwtSettings.Audience));
-
+builder.Services.AddScoped<AuthenticationUserAttribute>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -41,7 +46,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.SecretKey))
         };
     });
-
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 builder.Services.AddScoped<LogginUseCase>();
 builder.Services.AddScoped<Database>();
 

@@ -2,12 +2,12 @@
 
 public class Device
 {
-    public int DeviceId { get; set; }
-    public string DeviceName { get; set; } = string.Empty;
-    public string DeviceType { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; }
+    public int deviceid { get; set; }
+    public string devicename { get; set; } = string.Empty;
+    public string devicetype { get; set; } = string.Empty;
+    public DateTime createdat { get; set; }
 
-    public int UserId { get; set; }
+    public int userid { get; set; }
 
-    public UserModel? User { get; set; }
+    public UserModel user { get; set; }
 }
