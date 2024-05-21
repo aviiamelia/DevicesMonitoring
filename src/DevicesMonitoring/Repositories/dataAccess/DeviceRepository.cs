@@ -9,7 +9,7 @@ public class DeviceRepository : IDeviceRepository
     public DeviceRepository(MyDbContext dbContext) => _dbContext = dbContext;
     public Device FindDevice(string deviceName)
     {
-        var device = _dbContext.devices.First(device => device.DeviceName.Equals(deviceName));
+        var device = _dbContext.devices.First(device => device.devicename.Equals(deviceName));
         return device;
     }
 
@@ -28,4 +28,10 @@ public class DeviceRepository : IDeviceRepository
         _dbContext.SaveChanges();
     }
 
+    public List<Device> ListByUser(int userid)
+    {
+        var devices = _dbContext.devices.Where(device => device.userid.Equals(userid)).ToList();
+        return devices;
+
+    }
 }
