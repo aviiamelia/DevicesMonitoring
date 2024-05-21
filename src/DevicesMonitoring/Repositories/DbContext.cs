@@ -14,9 +14,9 @@ public class MyDbContext: DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Device>()
-            .HasOne(d => d.User)
+            .HasOne(d => d.user)
             .WithMany(u => u.Devices)
-            .HasForeignKey(d => d.UserId);
+            .HasForeignKey(d => d.userid);
     }
 
 }

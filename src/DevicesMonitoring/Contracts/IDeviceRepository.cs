@@ -9,4 +9,6 @@ public interface IDeviceRepository
     List<Device> ListAll();
 
     void Add(Device user);
+
+    List<Device> ListByUser(int userid);
 }

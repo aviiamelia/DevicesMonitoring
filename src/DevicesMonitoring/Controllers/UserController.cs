@@ -9,13 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace DevicesMonitoring.Controllers;
 [Route("api/createuser")]
 [ApiController]
-public class CreateUser : ControllerBase
+public class UserController : ControllerBase
 {
-    private readonly MyDbContext _context;
-    public CreateUser(MyDbContext context)
-    {
-        _context = context;
-    }
     [HttpPost]
     public IActionResult Create([FromBody] RequestCreateUser request, [FromServices] CreateUserUseCase useCase)
     {
@@ -32,7 +27,6 @@ public class CreateUser : ControllerBase
 
             Console.WriteLine($"An error occurred: {ex}");
 
-            // Return a custom error message
             return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred while creating the user.{ex}");
         }
     }
